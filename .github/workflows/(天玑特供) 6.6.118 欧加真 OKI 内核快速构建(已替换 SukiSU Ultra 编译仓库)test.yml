@@ -274,10 +274,9 @@ jobs:
             echo "ksuver=$KSU_VERSION" >> $GITHUB_OUTPUT
           elif [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
             echo "正在配置 SukiSU‑Ultra ..."
-            git clone --depth=1 https://github.com/SukiSU-Ultra/SukiSU-Ultra.git KernelSU
-            cd KernelSU
-            git checkout main
-            echo 'CONFIG_KSU_FULL_NAME_FORMAT="%TAG_NAME%-%COMMIT_SHA%@cctv18"' >> ../common/arch/arm64/configs/gki_defconfig
+            curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s builtin
+            echo 'CONFIG_KSU_FULL_NAME_FORMAT="%TAG_NAME%-%COMMIT_SHA%@cctv18"' >> ./common/arch/arm64/configs/gki_defconfig
+            cd ./KernelSU
             KSU_VERSION=$(expr $(git rev-list --count main) + 30700 2>/dev/null || echo 114514)
             echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
             echo "ksuver=$KSU_VERSION" >> $GITHUB_OUTPUT
@@ -307,7 +306,7 @@ jobs:
           else
             echo "已选择无内置KernelSU模式，跳过KernelSU配置..."
           fi
-
+  
       - name: 应用 KernelSU & SUSFS 补丁
         if: inputs.susfs_enable
         run: |
