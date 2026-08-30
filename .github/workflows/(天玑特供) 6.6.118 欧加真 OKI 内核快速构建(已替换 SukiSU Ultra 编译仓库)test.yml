@@ -550,14 +550,12 @@ jobs:
       - name: 启用内核级基带保护
         if: inputs.baseband_guard
         run: |
-          echo "正在启用内核级基带保护支持…"
+          echo "正在启用启用内核级基带保护支持…"
           cd kernel_workspace
-          if [ -f "security/Kconfig" ]; then
-            sed -i 's/Baseband‑guard/Baseband-guard/g' security/Kconfig
-          else
-            echo "警告：security/Kconfig 文件不存在，无法执行基带保护修改"
-            exit 1
-          fi
+          echo "CONFIG_BBG=y" >> ./common/arch/arm64/configs/gki_defconfig
+          cd ./common
+          curl -sSL https://github.com/cctv18/Baseband-guard/raw/master/setup.sh | bash
+          sed -i '/^config LSM$/,/^help$/{ /^[[:space:]]*default/ { /baseband_guard/! s/selinux/selinux,baseband_guard/ } }' security/Kconfig
 
       - name: 添加制作名称
         run: |
