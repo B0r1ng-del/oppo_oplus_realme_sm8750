@@ -17,10 +17,7 @@ on:
         type: choice
         default: 'resukisu'
         options:
-          - 'resukisu'
           - 'sukisu'
-          - 'ksunext'
-          - 'ksu'
           - 'none'
       susfs_enable:
         description: '是否开启susfs(用于增强隐藏环境挂载功能; 可能轻微增加耗电，上游更新导致不稳定时或不需要可关闭)'
@@ -262,26 +259,19 @@ jobs:
         run: |
           # 进入内核工作目录
           cd kernel_workspace
+
           if [[ ${{ github.event.inputs.ksu_type }} != "none" ]]; then
             if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
               echo "正在配置SukiSU‑Ultra(builtin)..."
               curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s builtin
-            elif [[ ${{ github.event.inputs.ksu_type }} == "resukisu" ]]; then
-              echo "正在配置ReSukiSU(builtin)..."
-              curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s builtin
-              # ReSukiSU源码本身默认 = true，无需修改
-            elif [[ ${{ github.event.inputs.ksu_type }} == "ksunext" ]]; then
-              echo "正在配置KernelSU‑Next(builtin)..."
-              curl -LSs "https://raw.githubusercontent.com/KernelSU-Next/KernelSU-Next/main/kernel/setup.sh" | bash -s builtin
-            elif [[ ${{ github.event.inputs.ksu_type }} == "ksu" ]]; then
-              echo "正在配置原版KernelSU(builtin)..."
-              curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s builtin
             fi
 
             echo 'CONFIG_KSU_FULL_NAME_FORMAT="%TAG_NAME%-%COMMIT_SHA%@cctv18"' >> ./common/arch/arm64/configs/gki_defconfig
             cd KernelSU
+
             # 生成自定义版本号（基于提交计数）, 失败时使用 114514
             KSU_VERSION=$(expr $(git rev-list --count main) + 30700 2>/dev/null || echo 114514)
+
             # 存储版本号到 GitHub 环境变量
             echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
             echo "ksuver=$KSU_VERSION" >> $GITHUB_OUTPUT
