@@ -359,7 +359,6 @@ jobs:
            echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
            echo "CONFIG_SECCOMP=y" >> ./common/arch/arm64/configs/gki_defconfig
            echo "CONFIG_SECCOMP_FILTER=y" >> ./common/arch/arm64/configs/gki_defconfig
-           echo "CONFIG_KSU_SECCOMP=y" >> ./common/arch/arm64/configs/gki_defconfig
           fi
           #添加对 Mountify (backslashxx/mountify) 模块的支持
           echo "CONFIG_TMPFS_XATTR=y" >> ./common/arch/arm64/configs/gki_defconfig
