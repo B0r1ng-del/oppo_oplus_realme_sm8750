@@ -315,6 +315,14 @@ jobs:
             patch -p1 < 50_add_susfs_in_gki-${{ env.ANDROID_VERSION }}-${{ env.KERNEL_VERSION }}.patch || true
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
             popd
+
+            # ✅只要不是none，强制修改seccomp为true，不再区分是什么ksu变体
+            echo "强制设置 ksu_seccomp_enabled = true"
+            pushd ./KernelSU
+            sed -i 's/static bool ksu_seccomp_enabled = false;/static bool ksu_seccomp_enabled = true;/' ./kernel/ksu.c || true
+            grep -n "ksu_seccomp_enabled" ./kernel/ksu.c || true
+            popd
+
           else
             echo "已选择无内置KernelSU模式，跳过susfs配置..."
           fi
@@ -324,14 +332,6 @@ jobs:
             pushd ./KernelSU
             cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch .
             patch -p1 < 10_enable_susfs_for_ksu.patch || true
-            popd
-          fi
-
-          if [[ "${KSU_TYPE}" == "sukisu" ]]; then
-            echo "SUSFS补丁全部完成，修改seccomp默认开启为true"
-            pushd ./KernelSU
-            sed -i 's/static bool ksu_seccomp_enabled = false;/static bool ksu_seccomp_enabled = true;/' ./kernel/ksu.c || true
-            grep -n "ksu_seccomp_enabled" ./kernel/ksu.c || true
             popd
           fi
 
