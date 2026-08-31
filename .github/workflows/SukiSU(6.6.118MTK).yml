@@ -316,13 +316,6 @@ jobs:
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
             popd
 
-            # ✅只要不是none，强制修改seccomp为true，不再区分是什么ksu变体
-            echo "强制设置 ksu_seccomp_enabled = true"
-            pushd ./KernelSU
-            sed -i 's/static bool ksu_seccomp_enabled = false;/static bool ksu_seccomp_enabled = true;/' ./kernel/ksu.c || true
-            grep -n "ksu_seccomp_enabled" ./kernel/ksu.c || true
-            popd
-
           else
             echo "已选择无内置KernelSU模式，跳过susfs配置..."
           fi
