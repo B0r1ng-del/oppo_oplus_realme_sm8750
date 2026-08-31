@@ -266,11 +266,6 @@ jobs:
             if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
               echo "正在配置SukiSU‑Ultra(builtin)..."
               curl -LSs "https://raw.githubusercontent.com/SukiSU-Ultra/SukiSU-Ultra/main/kernel/setup.sh" | bash -s builtin
-              # ========== 打完补丁后修改源码：把ksu_seccomp_enabled默认false改为true ==========
-              sed -i 's/static bool ksu_seccomp_enabled = false;/static bool ksu_seccomp_enabled = true;/' ./KernelSU/kernel/ksu.c
-              # 校验修改是否生效
-              grep "ksu_seccomp_enabled" ./KernelSU/kernel/ksu.c
-              # =========================================================================
             elif [[ ${{ github.event.inputs.ksu_type }} == "resukisu" ]]; then
               echo "正在配置ReSukiSU(builtin)..."
               curl -LSs "https://raw.githubusercontent.com/ReSukiSU/ReSukiSU/main/kernel/setup.sh" | bash -s builtin
@@ -318,6 +313,15 @@ jobs:
             cd ./KernelSU
             patch -p1 < 10_enable_susfs_for_ksu.patch || true
           fi
+
+          # ========= 新增：susfs全部补丁打完后，SukiSU‑Ultra 默认开启 seccomp =========
+          cd kernel_workspace
+          if [[ ${{ github.event.inputs.ksu_type }} == "sukisu" ]]; then
+            echo "SUSFS补丁全部完成，修改seccomp默认开启为true"
+            sed -i 's/static bool ksu_seccomp_enabled = false;/static bool ksu_seccomp_enabled = true;/' ./KernelSU/kernel/ksu.c || true
+            grep -n "ksu_seccomp_enabled" ./KernelSU/kernel/ksu.c || true
+          fi
+          # ======================================================================
           
       - name: 应用lz4 1.10.0 & zstd 1.5.7补丁
         if: inputs.lz4_enable
