@@ -373,6 +373,9 @@ jobs:
         run: |
           cd kernel_workspace
           echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
+          # ==========此处新增开启KPM配置==========
+          echo "CONFIG_KSU_KPM=y" >> ./common/arch/arm64/configs/gki_defconfig
+          # ======================================
           if [[ "${{ github.event.inputs.susfs_enable }}" == "false" ]]; then
            echo "CONFIG_KSU=y" >> ./common/arch/arm64/configs/gki_defconfig
            echo "CONFIG_SECCOMP=y" >> ./common/arch/arm64/configs/gki_defconfig
