@@ -391,6 +391,9 @@ jobs:
             echo "CONFIG_CRYPTO_LZ4KD=y" >> ./common/arch/arm64/configs/gki_defconfig
             echo "CONFIG_CRYPTO_842=y" >> ./common/arch/arm64/configs/gki_defconfig
           fi
+          # 新增：打印关键配置，日志查看确认是否写入成功
+          echo "===== 校验defconfig写入结果 ====="
+          grep -E 'CONFIG_KSU|CONFIG_KSU_KPM|CONFIG_SECCOMP' ./common/arch/arm64/configs/gki_defconfig
           # 开启O2编译优化配置
           echo "CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE=y" >> ./common/arch/arm64/configs/gki_defconfig
           #禁用 defconfig 检查
