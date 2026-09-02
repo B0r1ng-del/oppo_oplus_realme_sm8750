@@ -306,16 +306,6 @@ jobs:
             patch -p1 -N -F 3 < 69_hide_stuff.patch || true
             popd
 
-            # ========== 修复SukiSU‑Ultra kernel_umount.c编译报错 ==========
-            if [[ "${KSU_TYPE}" == "sukisu" ]]; then
-              echo "对SukiSU‑Ultra补全kernel_umount_feature_set函数，修复编译报错"
-              # 在文件最顶部加入extern变量声明
-              sed -i '1i\extern bool susfs_umount_protect;' common/drivers/kernelsu/feature/kernel_umount.c
-              # 插入正确签名的set_handler函数
-              sed -i '3i\static int kernel_umount_feature_set(u64 *value)\n{\n    susfs_umount_protect = !!(*value);\n    return 0;\n}\n' common/drivers/kernelsu/feature/kernel_umount.c
-            fi
-            # ======================================================================
-
           else
             echo "已选择无内置KernelSU模式，跳过susfs配置..."
           fi
