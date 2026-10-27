@@ -1,4 +1,4 @@
-name: '[临时修复] (天玑特供) 6.6.118 SukiSU Ultra'
+name: '[临时修复] (天玑特供) 6.6.118 KSU/SukiSU Ultra'
 # 临时应急：SukiSU-Ultra builtin 需要 SUSFS priority UID filter 接口；
 # 稳定分支 oki-android15-6.6 (SUSFS v2.3.0) 缺少该接口，本临时流改用 oki-android15-6.6-dev。
 # 所有构建步骤与功能保持不变；稳定分支合并该接口后可删除本文件。
